@@ -3,6 +3,7 @@ https://github.com/google/gae-secure-scaffold-python3/archive/master.zip
 google-cloud-ndb
 flask-talisman
 flask-seasurf
+flask-babel
 
 # We render the README-secure-scaffold.md for the demo website.
 mistune
