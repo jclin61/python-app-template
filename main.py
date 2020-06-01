@@ -22,7 +22,6 @@ import flask
 import markupsafe
 import mistune
 import securescaffold
-import securescaffold.views
 
 
 app = securescaffold.create_app(__name__)
@@ -124,8 +123,3 @@ def inject_conf_var():
                 CURRENT_LANGUAGE=session.get('language',request.accept_languages.best_match(app.config['LANGUAGES'])))
 
 app.jinja_env.globals['get_locale'] = get_locale
-
-
-if __name__ == "__main__":
-    app.secret_key = 'some secret key'
-    app.run(debug=True)
