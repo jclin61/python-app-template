@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from flask import session, request, redirect, url_for
+from flask_babel import Babel
 import os
 import re
 import unicodedata
@@ -20,9 +22,12 @@ import flask
 import markupsafe
 import mistune
 import securescaffold
+import securescaffold.views
 
 
 app = securescaffold.create_app(__name__)
+app.config.from_pyfile('config.py')
+babel = Babel(app)
 
 
 @app.route("/")
@@ -93,3 +98,34 @@ class Anchors(mistune.Renderer):
         text = re.sub(r"[-\s]+", "-", text)
 
         return text
+
+@app.route('/language/<language>')
+def set_language(language=None):
+    session['language'] = language
+    return redirect(url_for('about'))
+
+# Use the browser's language preferences to select an available translation
+@babel.localeselector
+def get_locale():
+    # if the user has set up the language manually it will be stored in the session,
+    # so we use the locale from the user settings
+    try:
+        language = session['language']
+    except KeyError:
+        language = None
+    if language is not None:
+        return language
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+@app.context_processor
+def inject_conf_var():
+    return dict(
+                AVAILABLE_LANGUAGES=app.config['LANGUAGES'],
+                CURRENT_LANGUAGE=session.get('language',request.accept_languages.best_match(app.config['LANGUAGES'])))
+
+app.jinja_env.globals['get_locale'] = get_locale
+
+
+if __name__ == "__main__":
+    app.secret_key = 'some secret key'
+    app.run(debug=True)

@@ -30,10 +30,14 @@
 			<p class="menu-label">
 				Navigation
 			</p>
+			<p>Pick your language</p>
+			{% for language in AVAILABLE_LANGUAGES %}
+			<a href="{{ url_for('set_language', language=language) }}" >{{ language }}</a>
+			{% endfor %}
 			<ul class="menu-list">
 				<li>
 					{% set about_url = url_for("about") %}
-					<a href="{{ about_url }}">Secure Scaffold</a>
+					<a href="{{ about_url }}">{{ gettext('Secure Scaffold') }}</a>
 
 					<ul>
 						<li><a href="{{ about_url }}#introduction">Introduction</a></li>
